@@ -15,7 +15,7 @@ struct ResourcesView: View {
     var body: some View {
         NavigationView {
             List {
-                // Emergency resources section
+                
                 Section(header: Text("Emergency Help")) {
                     NavigationLink(destination: EmergencyContactsView()) {
                         ResourceRowView(
@@ -27,7 +27,7 @@ struct ResourcesView: View {
                     }
                 }
                 
-                // Educational resources section
+                
                 Section(header: Text("Understanding Abuse")) {
                     NavigationLink(destination: AbuseTypesView()) {
                         ResourceRowView(
@@ -57,7 +57,7 @@ struct ResourcesView: View {
                     }
                 }
                 
-                // Local resources section
+                
                 if !viewModel.localResources.isEmpty {
                     Section(header: Text("Local Support")) {
                         ForEach(viewModel.localResources) { resource in
@@ -73,7 +73,7 @@ struct ResourcesView: View {
                     }
                 }
                 
-                // Help finding resources
+                
                 Section(header: Text("Find Help")) {
                     NavigationLink(destination: ResourceFinderView()) {
                         ResourceRowView(
@@ -97,7 +97,7 @@ struct ResourcesView: View {
         }
     }
     
-    // Helper function to determine icon for resource type
+    
     private func iconForResourceType(_ type: Resource.ResourceType) -> String {
         switch type {
         case .shelter: return "house.fill"
@@ -112,7 +112,7 @@ struct ResourcesView: View {
         }
     }
     
-    // Helper function to determine color for resource type
+    
     private func colorForResourceType(_ type: Resource.ResourceType) -> Color {
         switch type {
         case .shelter: return .indigo
@@ -128,7 +128,7 @@ struct ResourcesView: View {
     }
 }
 
-// Resource row component
+
 struct ResourceRowView: View {
     let icon: String
     let iconColor: Color
@@ -157,21 +157,21 @@ struct ResourceRowView: View {
     }
 }
 
-// View model for resources
+
 class ResourcesViewModel: ObservableObject {
     @Published var localResources: [Resource] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
     
-    // Load local resources based on location
+    
     func loadLocalResources() async {
         await MainActor.run {
             isLoading = true
             errorMessage = nil
         }
         
-        // In a real app, we would get the actual location and call the API
-        // For now, we'll use sample data
+        
+        
         let sampleResources = [
             Resource(
                 id: "1",
@@ -241,7 +241,7 @@ class ResourcesViewModel: ObservableObject {
             )
         ]
         
-        // Simulate network delay
+        
         try? await Task.sleep(nanoseconds: 1_000_000_000)
         
         await MainActor.run {
@@ -251,7 +251,7 @@ class ResourcesViewModel: ObservableObject {
     }
 }
 
-// Emergency contacts view
+
 struct EmergencyContactsView: View {
     var body: some View {
         List {
@@ -317,7 +317,7 @@ struct EmergencyContactsView: View {
     }
 }
 
-// Emergency contact row component
+
 struct EmergencyContactRow: View {
     let name: String
     let number: String
@@ -338,7 +338,7 @@ struct EmergencyContactRow: View {
                 Spacer()
                 
                 Button(action: {
-                    // In real app, would use callPhoneNumber(number)
+                    
                 }) {
                     HStack {
                         Image(systemName: isEmergency ? "phone.fill" : "message.fill")
@@ -360,7 +360,7 @@ struct EmergencyContactRow: View {
     }
 }
 
-// Resource detail view
+
 struct ResourceDetailView: View {
     let resource: Resource
     @State private var region: MKCoordinateRegion
@@ -368,7 +368,7 @@ struct ResourceDetailView: View {
     init(resource: Resource) {
         self.resource = resource
         
-        // Initialize the map region
+        
         let latitude = resource.latitude ?? 0
         let longitude = resource.longitude ?? 0
         _region = State(initialValue: MKCoordinateRegion(
@@ -392,7 +392,7 @@ struct ResourceDetailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
                 
-                // Resource details
+                
                 VStack(alignment: .leading, spacing: 20) {
                     Text(resource.name)
                         .font(.title2)
@@ -403,23 +403,23 @@ struct ResourceDetailView: View {
                     
                     Divider()
                     
-                    // Contact info
+                    
                     VStack(alignment: .leading, spacing: 12) {
                         if let phone = resource.phoneNumber {
                             DetailRow(icon: "phone.fill", text: phone) {
-                                // In real app would call: callPhoneNumber(phone)
+                                
                             }
                         }
                         
                         if let website = resource.website {
                             DetailRow(icon: "globe", text: website.absoluteString) {
-                                // In real app would call: openWebsite(website)
+                                
                             }
                         }
                         
                         if let address = resource.address {
                             DetailRow(icon: "location.fill", text: formatAddress(address)) {
-                                // In real app would call: openMaps(address)
+                                
                             }
                         }
                         
@@ -430,7 +430,7 @@ struct ResourceDetailView: View {
                     
                     Divider()
                     
-                    // Services provided
+                    
                     Text("Services")
                         .font(.headline)
                     
@@ -453,7 +453,7 @@ struct ResourceDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     
-    // Format address for display
+    
     private func formatAddress(_ address: Address) -> String {
         var formattedAddress = address.street1
         
@@ -467,7 +467,7 @@ struct ResourceDetailView: View {
     }
 }
 
-// Detail row component
+
 struct DetailRow: View {
     let icon: String
     let text: String
@@ -494,7 +494,7 @@ struct DetailRow: View {
     }
 }
 
-// Types of abuse educational view
+
 struct AbuseTypesView: View {
     var body: some View {
         ScrollView {
@@ -522,7 +522,7 @@ struct AbuseTypesView: View {
         .navigationTitle("Types of Abuse")
     }
     
-    // Abuse types information
+    
     private let abuseTypes = [
         AbuseTypeInfo(
             title: "Physical Abuse",
@@ -600,7 +600,7 @@ struct AbuseTypesView: View {
     ]
 }
 
-// Abuse type information structure
+
 struct AbuseTypeInfo {
     let title: String
     let icon: String
@@ -610,14 +610,14 @@ struct AbuseTypeInfo {
     let warning: String
 }
 
-// Abuse type card component
+
 struct AbuseTypeCard: View {
     let abuseType: AbuseTypeInfo
     @State private var isExpanded = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            // Header
+            
             HStack {
                 Image(systemName: abuseType.icon)
                     .font(.title2)
@@ -642,11 +642,11 @@ struct AbuseTypeCard: View {
                 }
             }
             
-            // Description always visible
+            
             Text(abuseType.description)
                 .foregroundColor(.secondary)
             
-            // Expandable content
+            
             if isExpanded {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Examples:")
@@ -681,7 +681,7 @@ struct AbuseTypeCard: View {
     }
 }
 
-// Your Rights view
+
 struct YourRightsView: View {
     var body: some View {
         ScrollView {
@@ -719,7 +719,7 @@ struct YourRightsView: View {
         .navigationTitle("Your Rights")
     }
     
-    // Rights categories
+    
     private let rightsCategories = [
         RightsCategory(
             title: "Safety Rights",
@@ -779,7 +779,7 @@ struct YourRightsView: View {
     ]
 }
 
-// Rights category structure
+
 struct RightsCategory {
     let title: String
     let icon: String
@@ -787,7 +787,7 @@ struct RightsCategory {
     let rights: [String]
 }
 
-// Rights category card component
+
 struct RightsCategoryCard: View {
     let category: RightsCategory
     @State private var isExpanded = false
@@ -820,7 +820,7 @@ struct RightsCategoryCard: View {
                 }
             }
             
-            // Expanded content
+            
             if isExpanded {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(category.rights, id: \.self) { right in
@@ -844,7 +844,7 @@ struct RightsCategoryCard: View {
     }
 }
 
-// Safety Plan View
+
 struct SafetyPlanView: View {
     var body: some View {
         ScrollView {
@@ -856,14 +856,14 @@ struct SafetyPlanView: View {
                     SafetyStepCard(step: step)
                 }
                 
-                // Call to action
+                
                 VStack(alignment: .center, spacing: 12) {
                     Text("Ready to create your own safety plan?")
                         .font(.headline)
                         .multilineTextAlignment(.center)
                     
                     Button(action: {
-                        // Would navigate to safety plan creation tool
+                        
                     }) {
                         Text("Create My Safety Plan")
                             .font(.headline)
@@ -889,7 +889,7 @@ struct SafetyPlanView: View {
         .navigationTitle("Safety Planning")
     }
     
-    // Safety plan steps
+    
     private let safetySteps = [
         SafetyStep(
             title: "Identify Warning Signs",
@@ -954,7 +954,7 @@ struct SafetyPlanView: View {
     ]
 }
 
-// Safety step structure
+
 struct SafetyStep {
     let title: String
     let icon: String
@@ -963,7 +963,7 @@ struct SafetyStep {
     let content: [String]
 }
 
-// Safety step card component
+
 struct SafetyStepCard: View {
     let step: SafetyStep
     @State private var isExpanded = false
@@ -1001,7 +1001,7 @@ struct SafetyStepCard: View {
                 }
             }
             
-            // Expanded content
+            
             if isExpanded {
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(step.content, id: \.self) { item in
@@ -1025,7 +1025,7 @@ struct SafetyStepCard: View {
     }
 }
 
-// Resource finder view
+
 struct ResourceFinderView: View {
     @State private var searchQuery = ""
     @State private var selectedResourceType: Resource.ResourceType?
@@ -1036,9 +1036,9 @@ struct ResourceFinderView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Search controls
+            
             VStack(spacing: 16) {
-                // Search field
+                
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
@@ -1062,9 +1062,9 @@ struct ResourceFinderView: View {
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
                 
-                // Filters
+                
                 HStack {
-                    // Resource type picker
+                    
                     Menu {
                         Button("All Types") {
                             selectedResourceType = nil
@@ -1091,7 +1091,7 @@ struct ResourceFinderView: View {
                     
                     Spacer()
                     
-                    // Distance slider
+                    
                     VStack(alignment: .trailing, spacing: 4) {
                         Text("Within \(Int(searchRadius)) miles")
                             .font(.caption)
@@ -1101,10 +1101,10 @@ struct ResourceFinderView: View {
                     }
                 }
                 
-                // Search button
+                
                 Button(action: {
                     showingLocationPrompt = true
-                    // In a real app, this would request location permission before searching
+                    
                     viewModel.searchResources(query: searchQuery, type: selectedResourceType, radius: Int(searchRadius))
                 }) {
                     HStack {
@@ -1121,7 +1121,7 @@ struct ResourceFinderView: View {
             .padding()
             .background(Color(.systemBackground))
             
-            // Results
+            
             if viewModel.isLoading {
                 VStack {
                     Spacer()
@@ -1159,7 +1159,7 @@ struct ResourceFinderView: View {
         .navigationTitle("Find Resources")
         .alert("Location Access", isPresented: $showingLocationPrompt) {
             Button("Allow") {
-                // In a real app, would request location permission
+                
             }
             Button("Cancel", role: .cancel) { }
         } message: {
@@ -1168,7 +1168,7 @@ struct ResourceFinderView: View {
     }
 }
 
-// Resource type extension for display
+
 extension Resource.ResourceType {
     static var allCases: [Resource.ResourceType] {
         return [.shelter, .counseling, .legalAid, .childServices, .hotline, .medical, .police, .school, .other]
@@ -1189,22 +1189,22 @@ extension Resource.ResourceType {
     }
 }
 
-// View model for resource finder
+
 class ResourceFinderViewModel: ObservableObject {
     @Published var searchResults: [Resource] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var hasSearched = false
     
-    // Search for resources based on criteria
+    
     func searchResources(query: String, type: Resource.ResourceType?, radius: Int) {
-        // In a real app, we would call the API with these parameters
+        
         isLoading = true
         hasSearched = true
         
-        // Simulate network delay
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            // Generate sample results
+            
             let sampleResults = self.generateSampleResults(query: query, type: type)
             
             self.searchResults = sampleResults
@@ -1212,7 +1212,7 @@ class ResourceFinderViewModel: ObservableObject {
         }
     }
     
-    // Generate sample results for prototype
+    
     private func generateSampleResults(query: String, type: Resource.ResourceType?) -> [Resource] {
         let allResults = [
             Resource(
@@ -1327,7 +1327,7 @@ class ResourceFinderViewModel: ObservableObject {
             )
         ]
         
-        // Filter based on query and type
+        
         var filteredResults = allResults
         
         if let type = type {
@@ -1346,7 +1346,7 @@ class ResourceFinderViewModel: ObservableObject {
     }
 }
 
-// Resource search result row component
+
 struct ResourceSearchResultRow: View {
     let resource: Resource
     
@@ -1370,7 +1370,7 @@ struct ResourceSearchResultRow: View {
                     .lineLimit(1)
                 
                 HStack(spacing: 15) {
-                    // Distance
+                    
                     if let distance = resource.distance {
                         HStack(spacing: 4) {
                             Image(systemName: "location.fill")
@@ -1381,7 +1381,7 @@ struct ResourceSearchResultRow: View {
                         .foregroundColor(.secondary)
                     }
                     
-                    // Hours
+                    
                     if let hours = resource.hours {
                         HStack(spacing: 4) {
                             Image(systemName: "clock.fill")
@@ -1393,7 +1393,7 @@ struct ResourceSearchResultRow: View {
                         .foregroundColor(.secondary)
                     }
                     
-                    // Emergency service badge
+                    
                     if resource.emergencyService {
                         Text("24/7")
                             .font(.caption)
@@ -1409,7 +1409,7 @@ struct ResourceSearchResultRow: View {
         .padding(.vertical, 6)
     }
     
-    // Helper function to determine icon for resource type
+    
     private func iconForResourceType(_ type: Resource.ResourceType) -> String {
         switch type {
         case .shelter: return "house.fill"
@@ -1424,7 +1424,7 @@ struct ResourceSearchResultRow: View {
         }
     }
     
-    // Helper function to determine color for resource type
+    
     private func colorForResourceType(_ type: Resource.ResourceType) -> Color {
         switch type {
         case .shelter: return .indigo

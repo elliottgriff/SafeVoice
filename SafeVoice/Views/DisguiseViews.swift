@@ -12,7 +12,7 @@ struct CalculatorDisguiseView: View {
     @EnvironmentObject var appState: AppState
     @State private var displayValue = "0"
     @State private var previousTaps = [String]()
-    @State private var secretCode = ["7", "7", "7", "9"] // Simple secret code to access real app
+    @State private var secretCode = ["7", "7", "7", "9"] // secret code to access real app
     
     // Calculator button styles
     struct CalculatorButton: View {
@@ -37,7 +37,6 @@ struct CalculatorDisguiseView: View {
         VStack(spacing: 12) {
             Spacer()
             
-            // Calculator display
             HStack {
                 Spacer()
                 Text(displayValue)
@@ -48,7 +47,6 @@ struct CalculatorDisguiseView: View {
                     .padding()
             }
             
-            // Calculator buttons
             VStack(spacing: 12) {
                 HStack(spacing: 12) {
                     CalculatorButton(label: "C", color: .gray) {
@@ -216,13 +214,10 @@ struct CalculatorDisguiseView: View {
     }
     
     private func calculateResult() {
-        // In a real calculator app, we would perform the calculation
-        // For this prototype, we'll just change the display
         displayValue = "42"
     }
 }
 
-// Extension for darkGray color definition
 extension Color {
     static let darkGray = Color(UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1.0))
 }
@@ -234,14 +229,12 @@ struct WeatherDisguiseView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            // Weather app header
             HStack {
                 Text("Weather")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Spacer()
                 
-                // Secret tap area
                 Button(action: {
                     checkSecretTap()
                 }) {
@@ -252,7 +245,6 @@ struct WeatherDisguiseView: View {
             }
             .padding()
             
-            // Current weather
             VStack(spacing: 10) {
                 Text("San Francisco")
                     .font(.title2)
@@ -279,7 +271,6 @@ struct WeatherDisguiseView: View {
             .background(Color.blue.opacity(0.1))
             .cornerRadius(15)
             
-            // Forecast
             VStack(alignment: .leading, spacing: 10) {
                 Text("7-Day Forecast")
                     .font(.headline)
@@ -308,7 +299,6 @@ struct WeatherDisguiseView: View {
         let now = Date()
         let timeInterval = now.timeIntervalSince(lastTapTime)
         
-        // If taps are within 0.5 seconds of each other
         if timeInterval < 0.5 {
             secretTapCount += 1
         } else {
@@ -317,7 +307,6 @@ struct WeatherDisguiseView: View {
         
         lastTapTime = now
         
-        // Three rapid taps triggers access
         if secretTapCount >= 3 {
             withAnimation {
                 appState.disguiseMode = false
@@ -327,7 +316,6 @@ struct WeatherDisguiseView: View {
     }
 }
 
-// Weather data item component
 struct WeatherDataItem: View {
     let value: String
     let label: String
@@ -344,7 +332,6 @@ struct WeatherDataItem: View {
     }
 }
 
-// Forecast row component
 struct ForecastRow: View {
     let day: Int
     
@@ -373,20 +360,17 @@ struct ForecastRow: View {
         .padding(.vertical, 8)
     }
     
-    // Day names
     private var dayName: String {
         let days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         let today = Calendar.current.component(.weekday, from: Date()) - 1
         return days[(today + day) % 7]
     }
     
-    // Weather icons
     private var weatherIcon: String {
         let icons = ["sun.max.fill", "cloud.sun.fill", "cloud.fill", "cloud.rain.fill", "cloud.sun.fill"]
         return icons[day % icons.count]
     }
     
-    // Temperature data
     private var lowTemp: Int {
         return [58, 59, 57, 56, 60, 62, 59][day % 7]
     }
@@ -396,7 +380,6 @@ struct ForecastRow: View {
     }
 }
 
-// Notes app disguise
 struct NotesDisguiseView: View {
     @EnvironmentObject var appState: AppState
     @State private var notes = [
@@ -412,7 +395,7 @@ struct NotesDisguiseView: View {
         let id = UUID()
         let title: String
         let content: String
-        let date = Date().addingTimeInterval(-Double.random(in: 0...604800)) // Random date within the last week
+        let date = Date().addingTimeInterval(-Double.random(in: 0...604800))
     }
     
     var body: some View {
@@ -447,7 +430,6 @@ struct NotesDisguiseView: View {
                     Image(systemName: "gear")
                 },
                 trailing: Button(action: {
-                    // Add new note
                 }) {
                     Image(systemName: "square.and.pencil")
                 }
@@ -458,19 +440,16 @@ struct NotesDisguiseView: View {
         }
     }
     
-    // Format date for display
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter.string(from: date)
     }
     
-    // Check for secret tap pattern
     private func checkSecretTap() {
         let now = Date()
         let timeInterval = now.timeIntervalSince(lastTapTime)
         
-        // If taps are within 0.5 seconds of each other
         if timeInterval < 0.5 {
             secretTapCount += 1
         } else {
@@ -479,7 +458,6 @@ struct NotesDisguiseView: View {
         
         lastTapTime = now
         
-        // Three rapid taps triggers access
         if secretTapCount >= 3 {
             withAnimation {
                 appState.disguiseMode = false
@@ -489,7 +467,6 @@ struct NotesDisguiseView: View {
     }
 }
 
-// Note detail view
 struct NoteDetailView: View {
     let note: NotesDisguiseView.Note
     @Environment(\.dismiss) var dismiss
@@ -510,7 +487,6 @@ struct NoteDetailView: View {
     }
 }
 
-// Utility app disguise
 struct UtilityDisguiseView: View {
     @EnvironmentObject var appState: AppState
     @State private var secretTapCount = 0
@@ -554,12 +530,10 @@ struct UtilityDisguiseView: View {
         }
     }
     
-    // Check for secret tap pattern
     private func checkSecretTap() {
         let now = Date()
         let timeInterval = now.timeIntervalSince(lastTapTime)
         
-        // If taps are within 0.5 seconds of each other
         if timeInterval < 0.5 {
             secretTapCount += 1
         } else {
@@ -568,7 +542,6 @@ struct UtilityDisguiseView: View {
         
         lastTapTime = now
         
-        // Three rapid taps triggers access
         if secretTapCount >= 3 {
             withAnimation {
                 appState.disguiseMode = false
@@ -578,7 +551,6 @@ struct UtilityDisguiseView: View {
     }
 }
 
-// Utility button component
 struct UtilityButton: View {
     let icon: String
     let title: String

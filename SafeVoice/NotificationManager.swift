@@ -11,17 +11,17 @@ import UserNotifications
 import Combine
 import UIKit
 
-// Notification manager to handle app notifications
+
 class NotificationManager: ObservableObject {
-    // Singleton instance
+    
     static let shared = NotificationManager()
     
-    // Published properties
+    
     @Published var isAuthorized = false
     @Published var pendingNotifications: [AppNotification] = []
     @Published var readNotifications: [AppNotification] = []
     
-    // UserDefaults keys
+    
     private enum Keys {
         static let pendingNotifications = "pendingNotifications"
         static let readNotifications = "readNotifications"
@@ -33,7 +33,7 @@ class NotificationManager: ObservableObject {
         checkAuthorizationStatus()
     }
     
-    // Request permission for notifications
+    
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             DispatchQueue.main.async {
@@ -43,7 +43,7 @@ class NotificationManager: ObservableObject {
         }
     }
     
-    // Check current authorization status
+    
     func checkAuthorizationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             DispatchQueue.main.async {
@@ -52,7 +52,7 @@ class NotificationManager: ObservableObject {
         }
     }
     
-    // Schedule a notification
+    
     func scheduleNotification(for notification: AppNotification) {
         guard isAuthorized else { return }
         
@@ -70,14 +70,14 @@ class NotificationManager: ObservableObject {
         content.sound = .default
         content.badge = NSNumber(value: self.pendingNotifications.count + 1)
         
-        // Add user info for handling notification actions
+        
         content.userInfo = [
             "id": notification.id,
             "type": notification.type.rawValue,
             "reference_id": notification.referenceID ?? ""
         ]
         
-        // Create trigger based on notification timing
+        
         let trigger: UNNotificationTrigger
         
         switch notification.timing {
@@ -90,14 +90,14 @@ class NotificationManager: ObservableObject {
             trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
         }
         
-        // Create request
+        
         let request = UNNotificationRequest(
             identifier: notification.id,
             content: content,
             trigger: trigger
         )
         
-        // Add to notification center
+        
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("Error scheduling notification: \(error)")
@@ -110,7 +110,7 @@ class NotificationManager: ObservableObject {
         }
     }
     
-    // Cancel a scheduled notification
+    
     func cancelNotification(id: String) {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
         
@@ -120,7 +120,7 @@ class NotificationManager: ObservableObject {
         }
     }
     
-    // Mark notification as read
+    
     func markAsRead(id: String) {
         if let index = pendingNotifications.firstIndex(where: { $0.id == id }) {
             let notification = pendingNotifications.remove(at: index)
@@ -128,19 +128,19 @@ class NotificationManager: ObservableObject {
             readNotifications.append(notification)
             saveNotifications()
             
-            // Update badge count
+            
             updateBadgeCount()
         }
     }
     
-    // Update app badge count
+    
     func updateBadgeCount() {
         if isAuthorized {
             UNUserNotificationCenter.current().setBadgeCount(pendingNotifications.count)
         }
     }
     
-    // Reset badge count to zero
+    
     func resetBadgeCount() {
         if isAuthorized {
             UNUserNotificationCenter.current().setBadgeCount(0)
@@ -191,7 +191,7 @@ class NotificationManager: ObservableObject {
         )
     }
     
-    // Create a check-in notification
+    
     func createCheckInNotification() -> AppNotification {
         return AppNotification(
             id: UUID().uuidString,
@@ -203,23 +203,21 @@ class NotificationManager: ObservableObject {
         )
     }
     
-    // Check for pending notifications that match reports
+    
     func checkForReportNotifications(reports: [Report]) {
         // Find report updates that should trigger notifications
         for report in reports {
             // Skip if report has no status updates
             guard !report.statusUpdates.isEmpty else { continue }
             
-            // Get latest status update
             if let latestUpdate = report.statusUpdates.sorted(by: { $0.timestamp > $1.timestamp }).first {
-                // Check if we already have a notification for this update
+                
                 let notificationExists = pendingNotifications.contains(where: { 
                     $0.referenceID == report.id && $0.createdAt > latestUpdate.timestamp.addingTimeInterval(-60)
                 }) || readNotifications.contains(where: { 
                     $0.referenceID == report.id && $0.createdAt > latestUpdate.timestamp.addingTimeInterval(-60)
                 })
                 
-                // If no notification exists for this update, create one
                 if !notificationExists {
                     let notification = createReportStatusNotification(report: report, update: latestUpdate)
                     scheduleNotification(for: notification)
@@ -231,7 +229,6 @@ class NotificationManager: ObservableObject {
         UserDefaults.standard.set(Date(), forKey: Keys.lastCheckTime)
     }
     
-    // Save notifications to UserDefaults
     private func saveNotifications() {
         if let encoded = try? JSONEncoder().encode(pendingNotifications) {
             UserDefaults.standard.set(encoded, forKey: Keys.pendingNotifications)
@@ -242,7 +239,6 @@ class NotificationManager: ObservableObject {
         }
     }
     
-    // Load notifications from UserDefaults
     private func loadSavedNotifications() {
         if let data = UserDefaults.standard.data(forKey: Keys.pendingNotifications),
            let notifications = try? JSONDecoder().decode([AppNotification].self, from: data) {
@@ -255,7 +251,6 @@ class NotificationManager: ObservableObject {
         }
     }
     
-    // Clear all notifications
     func clearAllNotifications() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         UNUserNotificationCenter.current().removeAllDeliveredNotifications()
@@ -267,7 +262,6 @@ class NotificationManager: ObservableObject {
     }
 }
 
-// Notification model
 class AppNotification: Identifiable, Codable, ObservableObject {
     let id: String
     let title: String
@@ -360,7 +354,6 @@ class AppNotification: Identifiable, Codable, ObservableObject {
         self.disguiseNotifications = disguiseNotifications
     }
     
-    // Custom decoder init to handle @Published properties
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
@@ -373,12 +366,10 @@ class AppNotification: Identifiable, Codable, ObservableObject {
         referenceID = try container.decodeIfPresent(String.self, forKey: .referenceID)
         disguiseNotifications = try container.decode(Bool.self, forKey: .disguiseNotifications)
         
-        // Decode the @Published properties
         isRead = try container.decode(Bool.self, forKey: .isRead)
         readAt = try container.decodeIfPresent(Date.self, forKey: .readAt)
     }
     
-    // Custom encode method to handle @Published properties
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
@@ -391,71 +382,55 @@ class AppNotification: Identifiable, Codable, ObservableObject {
         try container.encodeIfPresent(referenceID, forKey: .referenceID)
         try container.encode(disguiseNotifications, forKey: .disguiseNotifications)
         
-        // Encode the @Published properties by accessing their current values
         try container.encode(isRead, forKey: .isRead)
         try container.encodeIfPresent(readAt, forKey: .readAt)
     }
     
-    // Mark notification as read
     func markAsRead() {
         isRead = true
         readAt = Date()
     }
 }
 
-
-
-// Extension to check if UserDefaults contains a key
 extension UserDefaults {
     func contains(key: String) -> Bool {
         return object(forKey: key) != nil
     }
 }
 
-// App delegate for handling notifications when the app is not active
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         UNUserNotificationCenter.current().delegate = self
         return true
     }
     
-    // Handle notification when app is in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .badge, .sound])
     }
     
-    // Handle notification tap when app is in background
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
         
-        // Get notification ID
         if let id = userInfo["id"] as? String {
-            // Mark notification as read
             NotificationManager.shared.markAsRead(id: id)
             
-            // Process notification based on type
             if let typeString = userInfo["type"] as? String,
                let type = AppNotification.NotificationType(rawValue: typeString) {
                 
                 switch type {
                 case .reportUpdate, .actionRequired:
                     if let reportID = userInfo["reference_id"] as? String {
-                        // Would set navigation state to show report details
                         print("Should navigate to report: \(reportID)")
                     }
                 case .draftReminder:
                     if let reportID = userInfo["reference_id"] as? String {
-                        // Would set navigation state to edit draft
                         print("Should navigate to edit draft: \(reportID)")
                     }
                 case .checkIn:
-                    // Would set state to show check-in dialog
                     print("Should show check-in dialog")
                 case .appUpdate:
-                    // Would set state to show app update info
                     print("Should show app update info")
                 case .securityAlert:
-                    // Would set state to show security alert
                     print("Should show security alert")
                 }
             }

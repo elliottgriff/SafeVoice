@@ -15,7 +15,7 @@ struct ReportCreationView: View {
     @StateObject var viewModel = ReportCreationViewModel()
     @Environment(\.dismiss) private var dismiss
     
-    // Parameters for editing an existing report
+    
     var report: Report?
     var isEditingDraft: Bool = false
     
@@ -26,7 +26,7 @@ struct ReportCreationView: View {
     
     var body: some View {
         Form {
-            // Report type selection
+            
             Section(header: Text("What are you reporting?")) {
                 Picker("Type", selection: $viewModel.reportType) {
                     ForEach(viewModel.reportTypes, id: \.self) { type in
@@ -52,7 +52,7 @@ struct ReportCreationView: View {
                 }
             }
             
-            // Message and details
+            
             Section(header: Text("What happened?")) {
                 TextEditor(text: $viewModel.reportContent)
                     .frame(minHeight: 150)
@@ -65,14 +65,13 @@ struct ReportCreationView: View {
                 }
             }
             
-            // Supporting evidence/media
+            
             Section(header: Text("Add photos (optional)")) {
                 if !viewModel.selectedImages.isEmpty {
                     ScrollView(.horizontal) {
                         HStack {
                             ForEach(0..<viewModel.selectedImages.count, id: \.self) { index in
-                                if let uiImage = viewModel.selectedImages[index] {
-                                    Image(uiImage: uiImage)
+                                Image(uiImage: viewModel.selectedImages[index])
                                         .resizable()
                                         .scaledToFill()
                                         .frame(width: 100, height: 100)
@@ -89,7 +88,6 @@ struct ReportCreationView: View {
                                             alignment: .topTrailing
                                         )
                                         .padding(.vertical, 4)
-                                }
                             }
                         }
                     }
@@ -105,7 +103,7 @@ struct ReportCreationView: View {
                 }
             }
             
-            // Privacy options
+            
             Section(header: Text("Privacy Options")) {
                 Toggle("Submit anonymously", isOn: $viewModel.isAnonymous)
                 
@@ -120,7 +118,7 @@ struct ReportCreationView: View {
                 }
             }
             
-            // Safety alert (quick exit)
+            
             Section {
                 HStack {
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -135,7 +133,7 @@ struct ReportCreationView: View {
                 }
             }
             
-            // Submit button
+            
             Section {
                 Button(action: {
                     if isEditingDraft {
@@ -196,9 +194,9 @@ struct ReportCreationView: View {
         }
     }
     
-    // Submit report
+    
     func submitReport() {
-        // Create the report from view model
+        
         var reportToSubmit = Report(
             id: viewModel.editingReportID ?? "",
             timestamp: Date(),
@@ -217,10 +215,10 @@ struct ReportCreationView: View {
             )
         }
         
-        // Add media attachments
-        // In a real implementation, we would convert the UIImages to MediaAttachment
         
-        // Add location if available
+        
+        
+        
         if let location = viewModel.currentLocation {
             reportToSubmit.locationData = LocationData(
                 latitude: location.coordinate.latitude,
@@ -229,7 +227,7 @@ struct ReportCreationView: View {
             )
         }
         
-        // Submit the report
+        
         reportStore.submitReport(reportToSubmit) { result in
             switch result {
             case .success(_):
@@ -242,9 +240,9 @@ struct ReportCreationView: View {
         }
     }
     
-    // Save as draft
+    
     func saveDraft() {
-        // Create the report
+        
         let draftReport = Report(
             id: viewModel.editingReportID ?? "",
             timestamp: Date(),
@@ -254,15 +252,15 @@ struct ReportCreationView: View {
             status: .drafted
         )
         
-        // Save as draft
+        
         reportStore.saveDraft(draftReport)
         viewModel.showingDraftSaved = true
     }
 }
 
-// View model for report creation
+
 class ReportCreationViewModel: ObservableObject {
-    // Form fields
+    
     @Published var reportType: Report.ReportType = .other
     @Published var otherTypeDetails: String = ""
     @Published var reportContent: String = ""
@@ -270,7 +268,7 @@ class ReportCreationViewModel: ObservableObject {
     @Published var contactName: String = ""
     @Published var contactEmail: String = ""
     
-    // UI state
+    
     @Published var showingImagePicker = false
     @Published var showingResourceInfo = false
     @Published var showingConfirmation = false
@@ -279,37 +277,37 @@ class ReportCreationViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var isDraftSaved = false
     
-    // Media attachments
-    @Published var selectedImages: [UIImage?] = []
     
-    // Location data
+    @Published var selectedImages: [UIImage] = []
+    
+    
     @Published var currentLocation: CLLocation?
     
-    // Editing state
+    
     @Published var editingReportID: String?
     
-    // Available report types
+    
     let reportTypes = Report.ReportType.allCases
     
-    // Validation
+    
     var canSubmit: Bool {
         !reportContent.isEmpty
     }
     
-    // Load existing report for editing
+    
     func loadExistingReport(_ report: Report) {
         editingReportID = report.id
         reportType = report.reportType
         reportContent = report.content
         isAnonymous = report.isAnonymous
         
-        // Load contact info if available
+        
         if let contactInfo = report.contactInfo {
             contactName = contactInfo.name ?? ""
             contactEmail = contactInfo.email ?? ""
         }
         
-        // Load location if available
+        
         if let locationData = report.locationData {
             currentLocation = CLLocation(
                 latitude: locationData.latitude,
@@ -317,10 +315,10 @@ class ReportCreationViewModel: ObservableObject {
             )
         }
         
-        // In a real implementation, we would also load media attachments
+        
     }
     
-    // Reset form fields
+    
     func resetForm() {
         reportType = .other
         otherTypeDetails = ""
@@ -332,22 +330,22 @@ class ReportCreationViewModel: ObservableObject {
         editingReportID = nil
     }
     
-    // Remove image at index
+    
     func removeImage(at index: Int) {
         if index < selectedImages.count {
             selectedImages.remove(at: index)
         }
     }
     
-    // Activate emergency exit
+    
     func activateEmergencyExit() {
-        // In a real implementation, this would call the AppState method
-        // For now, we'll just post a notification
+        
+        
         NotificationCenter.default.post(name: NSNotification.Name("ActivateEmergencyExit"), object: nil)
     }
 }
 
-// Image picker for adding photos
+
 struct ImagePicker: UIViewControllerRepresentable {
     @Binding var selectedImages: [UIImage]
     @Environment(\.presentationMode) var presentationMode
@@ -392,7 +390,7 @@ struct ImagePicker: UIViewControllerRepresentable {
     }
 }
 
-// View to display information about different types of abuse
+
 struct ResourceInfoView: View {
     var body: some View {
         NavigationView {

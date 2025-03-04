@@ -18,26 +18,26 @@ struct HomeView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Welcome section
+                
                 welcomeSection
                 
-                // Quick report button
+                
                 quickReportButton
                 
-                // Active reports section
+                
                 if !reportStore.activeReports.isEmpty {
                     activeReportsSection
                 }
                 
-                // Draft reports section
+                
                 if !reportStore.draftReports.isEmpty {
                     draftReportsSection
                 }
                 
-                // Resources section
+                
                 resourcesSection
                 
-                // Safety tip section
+                
                 if showingTip {
                     safetyTipSection
                 }
@@ -57,7 +57,7 @@ struct HomeView: View {
         }
     }
     
-    // Welcome section
+    
     private var welcomeSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Welcome to SafeVoice")
@@ -70,7 +70,7 @@ struct HomeView: View {
         .padding(.bottom, 10)
     }
     
-    // Quick report button
+    
     private var quickReportButton: some View {
         Button(action: {
             showingNewReport = true
@@ -95,8 +95,8 @@ struct HomeView: View {
             .shadow(radius: 3)
         }
     }
+
     
-    // Active reports section
     private var activeReportsSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
@@ -119,7 +119,7 @@ struct HomeView: View {
         .padding(.vertical, 10)
     }
     
-    // Draft reports section
+    
     private var draftReportsSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
@@ -136,7 +136,7 @@ struct HomeView: View {
         .padding(.vertical, 10)
     }
     
-    // Resources section
+    
     private var resourcesSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("Quick Resources")
@@ -169,7 +169,7 @@ struct HomeView: View {
         .padding(.vertical, 10)
     }
     
-    // Safety tips section with rotating tips
+    
     private var safetyTipSection: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack {
@@ -210,7 +210,7 @@ struct HomeView: View {
         .padding(.vertical, 10)
     }
     
-    // Random tip generator
+    
     private var randomTip: (title: String, content: String) {
         let tips = [
             (title: "Using Quick Exit", content: "If you need to hide the app quickly, tap the X button in the top right corner or shake your device. This will immediately switch to disguise mode."),
@@ -223,7 +223,7 @@ struct HomeView: View {
     }
 }
 
-// All reports view
+
 struct AllReportsView: View {
     let reports: [Report]
     @Environment(\.dismiss) var dismiss
@@ -260,7 +260,7 @@ struct AllReportsView: View {
         })
     }
     
-    // Helper to format date
+    
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -269,11 +269,11 @@ struct AllReportsView: View {
     }
 }
 
-// Add a mock report generator for testing purposes
+
 extension HomeView {
     // Generate mock reports for testing
     private func generateMockReports() {
-        // Sample active reports
+        
         let activeReports = [
             Report(
                 id: "1",
@@ -291,7 +291,6 @@ extension HomeView {
             )
         ]
         
-        // Sample draft reports
         let draftReports = [
             Report(
                 id: "3",
@@ -302,7 +301,6 @@ extension HomeView {
             )
         ]
         
-        // Add to store
         for report in activeReports {
             reportStore.submitReport(report) { _ in }
         }

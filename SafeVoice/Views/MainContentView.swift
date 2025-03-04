@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-// Main content view with tabs
+
 struct MainContentView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var reportStore: ReportStore
@@ -18,7 +18,7 @@ struct MainContentView: View {
     
     var body: some View {
         TabView(selection: $appState.selectedTab) {
-            // Home/Reports tab
+
             NavigationView {
                 HomeView()
                     .navigationTitle("SafeVoice")
@@ -43,7 +43,7 @@ struct MainContentView: View {
                 }
             }
             
-            // Create report tab
+
             NavigationView {
                 ReportCreationView()
             }
@@ -52,7 +52,7 @@ struct MainContentView: View {
             }
             .tag(1)
             
-            // Resources tab
+
             NavigationView {
                 ResourcesView()
             }
@@ -61,7 +61,7 @@ struct MainContentView: View {
             }
             .tag(2)
             
-            // Settings tab
+
             NavigationView {
                 SettingsView()
             }
@@ -71,7 +71,7 @@ struct MainContentView: View {
             .tag(3)
         }
         .overlay(
-            // Quick exit button
+
             Group {
                 if showingQuickExit {
                     VStack {
@@ -96,19 +96,19 @@ struct MainContentView: View {
             }
         )
         .onAppear {
-            // Update notification count
+
             updateNotificationCount()
             
-            // Check user settings for exit button
+
             if let user = appState.currentUser {
                 showingQuickExit = user.preferences.emergencyOptions.enableEmergencyTap
             } else {
-                showingQuickExit = true // Default to showing
+                showingQuickExit = true
             }
         }
     }
     
-    // Update unread notification count
+
     private func updateNotificationCount() {
         unreadNotificationCount = notificationManager.pendingNotifications.count
     }

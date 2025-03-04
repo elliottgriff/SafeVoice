@@ -21,7 +21,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             Form {
-                // Disguise options
+                
                 Section(header: Text("App Appearance")) {
                     Button(action: {
                         showingDisguiseOptions = true
@@ -45,7 +45,7 @@ struct SettingsView: View {
                     
                     HStack {
                         Button(action: {
-                            // Quick test of disguise mode
+                            
                             appState.toggleDisguiseMode()
                         }) {
                             Text("Test Disguise Mode")
@@ -53,7 +53,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                // Security options
+                
                 Section(header: Text("Security")) {
                     Button(action: {
                         showingSecurityOptions = true
@@ -84,7 +84,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                // Data privacy
+                
                 Section(header: Text("Privacy")) {
                     Toggle("Incognito Mode", isOn: $viewModel.incognitoMode)
                         .onChange(of: viewModel.incognitoMode) { newValue in
@@ -109,7 +109,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                // Notifications (for follow-ups)
+                
                 Section(header: Text("Notifications")) {
                     Toggle("Allow Notifications", isOn: $viewModel.allowNotifications)
                         .onChange(of: viewModel.allowNotifications) { newValue in
@@ -129,7 +129,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                // About and Help
+                
                 Section(header: Text("About")) {
                     Button(action: {
                         showingPrivacyPolicy = true
@@ -144,7 +144,7 @@ struct SettingsView: View {
                         }
                     }
                     
-                    Link(destination: URL(string: "https://safevoice.org/help")!) {
+                    Link(destination: URL(string: "https://griffincss.com")!) {
                         HStack {
                             Image(systemName: "questionmark.circle")
                                 .foregroundColor(.blue)
@@ -155,7 +155,7 @@ struct SettingsView: View {
                         }
                     }
                     
-                    // App version
+                    
                     HStack {
                         Text("Version")
                         Spacer()
@@ -189,7 +189,7 @@ struct SettingsView: View {
     }
 }
 
-// ViewModel for Settings
+
 class SettingsViewModel: ObservableObject {
     enum DisguiseType: String, CaseIterable {
         case calculator = "calculator"
@@ -221,7 +221,7 @@ class SettingsViewModel: ObservableObject {
         }
     }
     
-    // Published properties
+    
     @Published var disguiseType: DisguiseType = .calculator
     @Published var securityMethod: SecurityMethod = .none
     @Published var startInDisguiseMode: Bool = false
@@ -230,14 +230,14 @@ class SettingsViewModel: ObservableObject {
     @Published var disguiseNotifications: Bool = true
     @Published var passcode: String = ""
     
-    // Biometric authentication context
+    
     private let context = LAContext()
     
     init() {
         loadSettings()
     }
     
-    // Save settings to UserDefaults
+    
     func saveSettings() {
         let defaults = UserDefaults.standard
         defaults.set(disguiseType.rawValue, forKey: "disguiseType")
@@ -247,14 +247,14 @@ class SettingsViewModel: ObservableObject {
         defaults.set(allowNotifications, forKey: "allowNotifications")
         defaults.set(disguiseNotifications, forKey: "disguiseNotifications")
         
-        // Don't save passcode in UserDefaults - in a real app, use Keychain
+        
         if !passcode.isEmpty {
             // This is a placeholder - use Keychain in real implementation
             // secureStorePasscode(passcode)
         }
     }
     
-    // Load settings from UserDefaults
+    
     private func loadSettings() {
         let defaults = UserDefaults.standard
         if let rawDisguiseType = defaults.string(forKey: "disguiseType"),
@@ -275,17 +275,17 @@ class SettingsViewModel: ObservableObject {
         // Load passcode from Keychain in real implementation
     }
     
-    // Update notification permissions
+    
     func updateNotificationPermissions() {
-        // In a real app, we would request notification permissions here
+        
         // UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
         //     // Handle result
         // }
     }
     
-    // Delete all user data
+    
     func deleteAllData() {
-        // Clear UserDefaults
+        
         let domain = Bundle.main.bundleIdentifier!
         UserDefaults.standard.removePersistentDomain(forName: domain)
         
@@ -298,16 +298,16 @@ class SettingsViewModel: ObservableObject {
         disguiseNotifications = true
         passcode = ""
         
-        // In a real app, we would delete any Core Data records/Keychain items here
+        
     }
     
-    // Check if biometric authentication is available
+    
     func canUseBiometrics() -> Bool {
         return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
     }
 }
 
-// Disguise options view
+
 struct DisguiseOptionsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
@@ -334,7 +334,7 @@ struct DisguiseOptionsView: View {
                 }
                 
                 Section(header: Text("Disguise Icon"), footer: Text("Choose how the app appears on your home screen.")) {
-                    // App icon options would go here
+                    
                     Text("Standard Icon (Default)")
                     Text("Calculator Icon")
                     Text("Notes Icon")
@@ -353,7 +353,7 @@ struct DisguiseOptionsView: View {
     }
 }
 
-// Security options view
+
 struct SecurityOptionsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
@@ -422,7 +422,7 @@ struct SecurityOptionsView: View {
                     viewModel.saveSettings()
                 }
                 Button("Enable") {
-                    // In a real app, we would set up biometrics here
+                    
                     viewModel.securityMethod = .biometric
                     viewModel.saveSettings()
                 }
@@ -445,7 +445,7 @@ struct SecurityOptionsView: View {
     }
 }
 
-// Passcode setup view
+
 struct PasscodeSetupView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @Environment(\.dismiss) private var dismiss
@@ -468,7 +468,7 @@ struct PasscodeSetupView: View {
                 
                 Spacer()
                 
-                // Passcode dots
+                
                 HStack(spacing: 20) {
                     ForEach(0..<4) { index in
                         Circle()
@@ -490,7 +490,7 @@ struct PasscodeSetupView: View {
                         .padding()
                 }
                 
-                // Number pad
+                
                 VStack(spacing: 15) {
                     ForEach(0..<3) { row in
                         HStack(spacing: 30) {
@@ -510,7 +510,7 @@ struct PasscodeSetupView: View {
                     }
                     
                     HStack(spacing: 30) {
-                        // Empty space for layout
+                        
                         Circle()
                             .fill(Color.clear)
                             .frame(width: 70, height: 70)
@@ -546,13 +546,13 @@ struct PasscodeSetupView: View {
         }
     }
     
-    // Helper to determine if a dot should be filled
+    
     private func dotOpacity(at index: Int) -> Double {
         let currentPasscode = showingConfirmation ? confirmPasscode : passcode
         return index < currentPasscode.count ? 1 : 0
     }
     
-    // Add digit to passcode
+    
     private func addDigit(_ digit: Int) {
         let currentPasscode = showingConfirmation ? confirmPasscode : passcode
         
@@ -560,14 +560,14 @@ struct PasscodeSetupView: View {
             if showingConfirmation {
                 confirmPasscode += "\(digit)"
                 
-                // Check if confirmation is complete
+                
                 if confirmPasscode.count == 4 {
                     validatePasscodes()
                 }
             } else {
                 passcode += "\(digit)"
                 
-                // Move to confirmation after 4 digits
+                
                 if passcode.count == 4 {
                     showingConfirmation = true
                 }
@@ -575,7 +575,7 @@ struct PasscodeSetupView: View {
         }
     }
     
-    // Delete last digit
+    
     private func deleteDigit() {
         if showingConfirmation {
             if !confirmPasscode.isEmpty {
@@ -587,11 +587,11 @@ struct PasscodeSetupView: View {
             }
         }
         
-        // Clear error message when editing
+        
         errorMessage = nil
     }
     
-    // Validate passcodes match
+    
     private func validatePasscodes() {
         if passcode == confirmPasscode {
             viewModel.passcode = passcode
@@ -600,7 +600,7 @@ struct PasscodeSetupView: View {
             dismiss()
         } else {
             errorMessage = "Passcodes don't match. Try again."
-            // Reset for retry
+            
             showingConfirmation = false
             confirmPasscode = ""
             passcode = ""
@@ -608,7 +608,7 @@ struct PasscodeSetupView: View {
     }
 }
 
-// Emergency options view
+
 struct EmergencyOptionsView: View {
     @Environment(\.dismiss) private var dismiss
     
@@ -634,7 +634,7 @@ struct EmergencyOptionsView: View {
                         .foregroundColor(.secondary)
                     
                     Button("Set Duress Passcode") {
-                        // Would show passcode setting UI
+                        
                     }
                 }
                 
@@ -655,7 +655,7 @@ struct EmergencyOptionsView: View {
     }
 }
 
-// Privacy policy view
+
 struct PrivacyPolicyView: View {
     @Environment(\.dismiss) private var dismiss
     

@@ -9,7 +9,6 @@
 import Foundation
 import Combine
 
-// Enhanced Report model with more features
 struct Report: Identifiable, Codable {
     var id: String
     var timestamp: Date
@@ -76,7 +75,6 @@ struct Report: Identifiable, Codable {
         }
     }
     
-    // Create a new empty report
     static func createNew(reportType: ReportType = .other) -> Report {
         Report(
             id: UUID().uuidString,
@@ -87,14 +85,12 @@ struct Report: Identifiable, Codable {
         )
     }
     
-    // Add a status update to the report
     mutating func addStatusUpdate(_ update: StatusUpdate) {
         statusUpdates.append(update)
         self.status = update.newStatus
     }
 }
 
-// Media attachment model
 struct MediaAttachment: Identifiable, Codable {
     var id: String = UUID().uuidString
     var type: AttachmentType
@@ -111,7 +107,6 @@ struct MediaAttachment: Identifiable, Codable {
     }
 }
 
-// Location data model
 struct LocationData: Codable {
     var latitude: Double
     var longitude: Double
@@ -120,7 +115,6 @@ struct LocationData: Codable {
     var timestamp: Date
 }
 
-// Contact information model
 struct ContactInfo: Codable {
     var name: String?
     var email: String?
@@ -132,7 +126,6 @@ struct ContactInfo: Codable {
     }
 }
 
-// Status update model
 struct StatusUpdate: Identifiable, Codable {
     var id: String = UUID().uuidString
     var timestamp: Date
@@ -148,7 +141,6 @@ struct StatusUpdate: Identifiable, Codable {
     }
 }
 
-// Enhanced ReportStore with more functionality
 class ReportStore: ObservableObject {
     @Published var activeReports: [Report] = []
     @Published var draftReports: [Report] = []
@@ -157,7 +149,6 @@ class ReportStore: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    // UserDefaults keys
     private enum Keys {
         static let activeReports = "activeReports"
         static let draftReports = "draftReports"
@@ -167,19 +158,15 @@ class ReportStore: ObservableObject {
         loadFromStorage()
     }
     
-    // Submit a report to the server
     func submitReport(_ report: Report, completion: @escaping (Result<Report, Error>) -> Void) {
         isLoading = true
         
-        // Final report to submit
         var finalReport = report
         
-        // Ensure the report isn't a draft
         if finalReport.status == .drafted {
             finalReport.status = .submitted
         }
         
-        // Set timestamp to now if it's a new submission
         if finalReport.id.isEmpty {
             finalReport.id = UUID().uuidString
             finalReport.timestamp = Date()
@@ -213,20 +200,16 @@ class ReportStore: ObservableObject {
         }
     }
     
-    // Save report as draft
     func saveDraft(_ report: Report) {
         var draftReport = report
         
-        // Ensure it's marked as a draft
         draftReport.status = .drafted
         
-        // Set ID if it's a new draft
         if draftReport.id.isEmpty {
             draftReport.id = UUID().uuidString
             draftReport.timestamp = Date()
         }
         
-        // Update or add to drafts
         if let index = draftReports.firstIndex(where: { $0.id == draftReport.id }) {
             draftReports[index] = draftReport
         } else {
@@ -236,7 +219,6 @@ class ReportStore: ObservableObject {
         saveToStorage()
     }
     
-    // Delete a report
     func deleteReport(id: String) {
         if let index = activeReports.firstIndex(where: { $0.id == id }) {
             activeReports.remove(at: index)
@@ -249,7 +231,6 @@ class ReportStore: ObservableObject {
         saveToStorage()
     }
     
-    // Add a status update to a report
     func addStatusUpdate(reportID: String, update: StatusUpdate, completion: @escaping (Bool) -> Void) {
         guard var report = getReport(id: reportID) else {
             completion(false)
@@ -259,7 +240,6 @@ class ReportStore: ObservableObject {
         report.addStatusUpdate(update)
         report.status = update.newStatus
         
-        // Update in active reports
         if let index = activeReports.firstIndex(where: { $0.id == reportID }) {
             activeReports[index] = report
             saveToStorage()
@@ -269,7 +249,6 @@ class ReportStore: ObservableObject {
         }
     }
     
-    // Get report by ID
     func getReport(id: String) -> Report? {
         if let report = activeReports.first(where: { $0.id == id }) {
             return report
@@ -282,7 +261,6 @@ class ReportStore: ObservableObject {
         return nil
     }
     
-    // Check for report updates from server
     func checkForUpdates() {
         isLoading = true
         
@@ -351,7 +329,6 @@ class ReportStore: ObservableObject {
         }
     }
     
-    // Save reports to UserDefaults
     private func saveToStorage() {
         if let encoded = try? JSONEncoder().encode(activeReports) {
             UserDefaults.standard.set(encoded, forKey: Keys.activeReports)
@@ -362,7 +339,6 @@ class ReportStore: ObservableObject {
         }
     }
     
-    // Load reports from UserDefaults
     private func loadFromStorage() {
         if let activeData = UserDefaults.standard.data(forKey: Keys.activeReports),
            let loadedActiveReports = try? JSONDecoder().decode([Report].self, from: activeData) {
@@ -385,7 +361,6 @@ class ReportStore: ObservableObject {
 
 // Report media handling extension
 extension ReportStore {
-    // Add a media attachment to a report
     func addMediaAttachment(reportID: String, attachment: MediaAttachment) -> Bool {
         guard var report = getReport(id: reportID) else {
             return false
@@ -393,7 +368,6 @@ extension ReportStore {
         
         report.mediaAttachments.append(attachment)
         
-        // Update in appropriate collection
         if report.status == .drafted {
             if let index = draftReports.firstIndex(where: { $0.id == reportID }) {
                 draftReports[index] = report
@@ -411,7 +385,6 @@ extension ReportStore {
         return false
     }
     
-    // Remove a media attachment from a report
     func removeMediaAttachment(reportID: String, attachmentID: String) -> Bool {
         guard var report = getReport(id: reportID) else {
             return false
@@ -420,7 +393,6 @@ extension ReportStore {
         if let attachmentIndex = report.mediaAttachments.firstIndex(where: { $0.id == attachmentID }) {
             report.mediaAttachments.remove(at: attachmentIndex)
             
-            // Update in appropriate collection
             if report.status == .drafted {
                 if let index = draftReports.firstIndex(where: { $0.id == reportID }) {
                     draftReports[index] = report
@@ -444,7 +416,6 @@ extension ReportStore {
         // In a real app, would save to app's Documents directory
         // For demo, we'll just create the attachment with data as thumbnail
         
-        // Determine attachment type from mime type
         let type: MediaAttachment.AttachmentType
         if mimeType.contains("image") {
             type = .image
@@ -456,7 +427,6 @@ extension ReportStore {
             type = .document
         }
         
-        // Create attachment
         let attachment = MediaAttachment(
             type: type,
             thumbnail: type == .image ? data : nil,

@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-// Welcome back view for returning users
+
 struct WelcomeBackView: View {
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var appState: AppState
@@ -16,7 +16,7 @@ struct WelcomeBackView: View {
     
     var body: some View {
         VStack(spacing: 25) {
-            // Welcome header
+            
             VStack(spacing: 12) {
                 Image(systemName: "hand.wave.fill")
                     .font(.system(size: 48))
@@ -38,12 +38,12 @@ struct WelcomeBackView: View {
             
             Spacer()
             
-            // Report updates
+            
             if !reportStore.activeReports.isEmpty {
                 reportUpdatesView
             }
             
-            // Action buttons
+            
             VStack(spacing: 15) {
                 Button(action: {
                     appState.showingNewReport = true
@@ -78,7 +78,7 @@ struct WelcomeBackView: View {
         .background(Color(.systemBackground))
     }
     
-    // Reports update view
+    
     private var reportUpdatesView: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text("Report Updates")
@@ -126,7 +126,7 @@ struct WelcomeBackView: View {
         .cornerRadius(12)
     }
     
-    // Helper for status icon
+    
     private func statusIcon(for report: Report) -> String {
         switch report.status {
         case .drafted: return "doc.fill"
@@ -137,7 +137,7 @@ struct WelcomeBackView: View {
         }
     }
     
-    // Helper for status color
+    
     private func statusColor(for report: Report) -> Color {
         switch report.status {
         case .drafted: return .gray

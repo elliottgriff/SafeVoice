@@ -8,7 +8,6 @@
 
 import Foundation
 
-// Response model for report submission
 struct ReportResponse: Codable {
     let id: String
     let timestamp: Date
@@ -25,7 +24,6 @@ struct ReportResponse: Codable {
     }
 }
 
-// Resource model for support services
 struct Resource: Codable, Identifiable {
     let id: String
     let name: String
@@ -39,7 +37,7 @@ struct Resource: Codable, Identifiable {
     let emergencyService: Bool
     let latitude: Double?
     let longitude: Double?
-    let distance: Double? // Distance in miles from user's location
+    let distance: Double?
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -70,7 +68,6 @@ struct Resource: Codable, Identifiable {
     }
 }
 
-// Address model
 struct Address: Codable {
     let street1: String
     let street2: String?
@@ -89,14 +86,12 @@ struct Address: Codable {
     }
 }
 
-// Model for attachment data
 struct AttachmentData {
     let data: Data
     let filename: String
     let mimeType: String
 }
 
-// Report status update model
 struct ReportStatusUpdate: Codable {
     let reportId: String
     let status: String
@@ -122,7 +117,6 @@ struct ReportStatusUpdate: Codable {
     }
 }
 
-// Authentication model for anonymous profiles
 struct AnonymousProfile: Codable {
     let token: String
     let anonymousId: String
@@ -137,7 +131,6 @@ struct AnonymousProfile: Codable {
     }
 }
 
-// Extension to support Data body in multipart forms
 extension Data {
     mutating func append(_ string: String) {
         if let data = string.data(using: .utf8) {

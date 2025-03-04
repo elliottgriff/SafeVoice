@@ -25,12 +25,9 @@ struct SafeVoiceApp: App {
         }
     }
     
-    // Setup initial app state
     private func setupApp() {
-        // Load saved user state
         appState.loadSavedUserState()
         
-        // If no user is loaded, check if we should start in disguise mode
         if appState.currentUser == nil {
             let settings = UserDefaults.standard
             if settings.bool(forKey: "startInDisguiseMode") {
@@ -38,30 +35,24 @@ struct SafeVoiceApp: App {
             }
         }
         
-        // Check for report updates periodically
         startUpdateChecks()
     }
     
-    // Schedule periodic update checks
     private func startUpdateChecks() {
         // Check for report updates every 10 minutes when app is running
         Timer.scheduledTimer(withTimeInterval: 600, repeats: true) { _ in
             reportStore.checkForUpdates()
             
-            // Check if any updates should trigger notifications
             NotificationManager.shared.checkForReportNotifications(reports: reportStore.activeReports)
         }
     }
 }
 
-// Enhanced App State to support more features
 class AppState: ObservableObject {
-    // Main app state
     @Published var isAuthenticated = false
     @Published var disguiseMode = false
     @Published var currentUser: User?
     
-    // Navigation state
     @Published var selectedTab = 0
     @Published var showingNewReport = false
     @Published var showingAllReports = false
@@ -69,59 +60,48 @@ class AppState: ObservableObject {
     @Published var showingSettings = false
     @Published var showingProfile = false
     
-    // Current view details
     @Published var selectedReportID: String?
     @Published var selectedResourceID: String?
     
-    // App mode tracking
     @Published var isInEmergencyMode = false
     @Published var isInIncognitoMode = false
     
-    // Cancellables for Combine subscriptions
     private var cancellables = Set<AnyCancellable>()
     
-    // Toggle between normal and disguise mode
     func toggleDisguiseMode() {
         disguiseMode.toggle()
         
-        // If exiting disguise mode, check if authentication is needed
         if !disguiseMode {
             checkAuthentication()
         }
     }
     
-    // Check if authentication is needed
+    // Check authentication
     private func checkAuthentication() {
         let settings = UserDefaults.standard
         let securityEnabled = settings.bool(forKey: "securityEnabled")
         
-        // If security is enabled, require authentication
         if securityEnabled && currentUser != nil {
             isAuthenticated = false
         }
     }
     
-    // Activate emergency mode
     func activateEmergencyMode() {
         isInEmergencyMode = true
         disguiseMode = true
         
-        // If incognito mode is enabled, also clear data
         if isInIncognitoMode {
             clearSensitiveData()
         }
     }
     
-    // Clear sensitive data in emergency
     private func clearSensitiveData() {
-        // Implement based on user settings
         let shouldClearData = UserDefaults.standard.bool(forKey: "clearDataOnEmergency")
         if shouldClearData {
             // Would clear reports, history, etc.
         }
     }
     
-    // Reset to default app state
     func resetAppState() {
         isAuthenticated = false
         disguiseMode = false
@@ -132,7 +112,6 @@ class AppState: ObservableObject {
     }
 }
 
-// Main app coordinator
 struct AppCoordinator: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var reportStore: ReportStore
@@ -144,17 +123,14 @@ struct AppCoordinator: View {
     var body: some View {
         Group {
             if appState.disguiseMode {
-                // Show appropriate disguise view based on settings
                 DisguiseRouter()
             } else if !appState.isAuthenticated {
-                // If not authenticated, show onboarding or auth
                 if appState.currentUser != nil {
                     AuthenticationView()
                 } else {
                     OnboardingView()
                 }
             } else {
-                // Main app content
                 MainContentView()
                     .onAppear {
                         if !showingWelcomeBack && appState.currentUser != nil {
@@ -164,16 +140,13 @@ struct AppCoordinator: View {
             }
         }
         .onAppear {
-            // Check if security is needed
             let settings = UserDefaults.standard
             if settings.bool(forKey: "securityEnabled") && !appState.isAuthenticated && !appState.disguiseMode {
                 showingAuth = true
             }
             
-            // Reset badge count when app opens
             notificationManager.resetBadgeCount()
             
-            // Check for report updates
             reportStore.checkForUpdates()
             notificationManager.checkForReportNotifications(reports: reportStore.activeReports)
         }
@@ -183,10 +156,9 @@ struct AppCoordinator: View {
         .sheet(isPresented: $showingWelcomeBack) {
             WelcomeBackView()
         }
-        .onChange(of: appState.isAuthenticated) { newValue in
-            // Reset showing auth when authentication changes
+        .onChange(of: appState.isAuthenticated, { _, _ in
             showingAuth = false
-        }
+        })
     }
 }
 
@@ -200,7 +172,6 @@ struct AuthenticationView: View {
                 .font(.title)
                 .padding()
             
-            // Simplified passcode implementation for prototype
             HStack {
                 ForEach(0..<4) { _ in
                     Circle()
@@ -211,7 +182,6 @@ struct AuthenticationView: View {
             
             Spacer()
             
-            // Numeric keypad would go here
             Text("Numeric keypad placeholder")
             
             Spacer()
@@ -226,7 +196,6 @@ struct AuthenticationView: View {
     }
 }
 
-// Disguise router to show appropriate disguise view
 struct DisguiseRouter: View {
     @EnvironmentObject var appState: AppState
     
@@ -245,12 +214,10 @@ struct DisguiseRouter: View {
         }
     }
     
-    // Get user's preferred disguise type
     private func getUserDisguiseType() -> UserPreferences.DisguiseType {
         if let user = appState.currentUser {
             return user.preferences.disguiseType
         } else {
-            // Default to calculator if no user preferences
             if let preferences = UserDataService.shared.loadUserPreferences() {
                 return preferences.disguiseType
             } else {

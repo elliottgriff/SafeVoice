@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-// Report card component
+
 struct ReportCard: View {
     let report: Report
     
@@ -60,7 +60,7 @@ struct ReportCard: View {
         .buttonStyle(PlainButtonStyle())
     }
     
-    // Helper to format date
+    
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -68,7 +68,7 @@ struct ReportCard: View {
         return formatter.string(from: date)
     }
     
-    // Helper to get icon for report type
+    
     private func iconForReportType(_ type: Report.ReportType) -> String {
         switch type {
         case .physical: return "hand.raised.slash.fill"
@@ -80,7 +80,7 @@ struct ReportCard: View {
         }
     }
     
-    // Helper to get color for report type
+    
     private func colorForReportType(_ type: Report.ReportType) -> Color {
         switch type {
         case .physical: return .red
@@ -93,7 +93,7 @@ struct ReportCard: View {
     }
 }
 
-// Status badge component
+
 struct StatusBadge: View {
     let status: Report.ReportStatus
     
@@ -128,7 +128,7 @@ struct StatusBadge: View {
     }
 }
 
-// Draft report card component
+
 struct DraftReportCard: View {
     let report: Report
     @EnvironmentObject var reportStore: ReportStore
@@ -156,7 +156,7 @@ struct DraftReportCard: View {
                 Spacer()
                 
                 Button(action: {
-                    // Delete draft
+                    
                     reportStore.deleteReport(id: report.id)
                 }) {
                     Image(systemName: "trash")
@@ -177,7 +177,7 @@ struct DraftReportCard: View {
         }
     }
     
-    // Helper to format date
+    
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -186,7 +186,7 @@ struct DraftReportCard: View {
     }
 }
 
-// Resource card component
+
 struct ResourceCard: View {
     let title: String
     let icon: String
@@ -213,7 +213,7 @@ struct ResourceCard: View {
     }
 }
 
-// Report detail view
+
 struct ReportDetailView: View {
     let report: Report
     @EnvironmentObject var reportStore: ReportStore
@@ -223,7 +223,7 @@ struct ReportDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // Report header
+                
                 HStack {
                     VStack(alignment: .leading, spacing: 5) {
                         Text(titleForReportType(report.reportType))
@@ -242,7 +242,7 @@ struct ReportDetailView: View {
                 
                 Divider()
                 
-                // Report content
+                
                 VStack(alignment: .leading, spacing: 15) {
                     Text("Report Details")
                         .font(.headline)
@@ -251,7 +251,7 @@ struct ReportDetailView: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 
-                // Media attachments if any
+                
                 if !report.mediaAttachments.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Attachments")
@@ -269,7 +269,7 @@ struct ReportDetailView: View {
                 
                 Divider()
                 
-                // Status updates
+                
                 VStack(alignment: .leading, spacing: 15) {
                     HStack {
                         Text("Status Updates")
@@ -283,7 +283,7 @@ struct ReportDetailView: View {
                     }
                     
                     if report.statusUpdates.isEmpty {
-                        // Initial status
+                        
                         HStack {
                             Image(systemName: statusIcon(for: report.status))
                                 .foregroundColor(statusColor(for: report.status))
@@ -296,7 +296,7 @@ struct ReportDetailView: View {
                         .background(statusColor(for: report.status).opacity(0.1))
                         .cornerRadius(10)
                     } else {
-                        // Show status updates
+                        
                         ForEach(report.statusUpdates.sorted(by: { $0.timestamp > $1.timestamp })) { update in
                             StatusUpdateRow(update: update)
                         }
@@ -305,7 +305,7 @@ struct ReportDetailView: View {
                 
                 Divider()
                 
-                // Actions
+                
                 VStack(alignment: .leading, spacing: 15) {
                     Text("Actions")
                         .font(.headline)
@@ -342,7 +342,7 @@ struct ReportDetailView: View {
         }
     }
     
-    // Helper to format date
+    
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -350,7 +350,7 @@ struct ReportDetailView: View {
         return formatter.string(from: date)
     }
     
-    // Helper to get title for report type
+    
     private func titleForReportType(_ type: Report.ReportType) -> String {
         switch type {
         case .physical: return "Physical Abuse Report"
@@ -362,7 +362,7 @@ struct ReportDetailView: View {
         }
     }
     
-    // Helper to get status icon
+    
     private func statusIcon(for status: Report.ReportStatus) -> String {
         switch status {
         case .drafted: return "doc.fill"
@@ -373,7 +373,7 @@ struct ReportDetailView: View {
         }
     }
     
-    // Helper to get status color
+    
     private func statusColor(for status: Report.ReportStatus) -> Color {
         switch status {
         case .drafted: return .gray
@@ -384,7 +384,7 @@ struct ReportDetailView: View {
         }
     }
     
-    // Helper to get status message
+    
     private func statusMessage(for status: Report.ReportStatus) -> String {
         switch status {
         case .drafted:
@@ -400,7 +400,7 @@ struct ReportDetailView: View {
         }
     }
     
-    // Helper to render media attachment
+    
     private func mediaAttachmentView(for attachment: MediaAttachment) -> some View {
         switch attachment.type {
         case .image:
@@ -443,13 +443,13 @@ struct ReportDetailView: View {
     }
 }
 
-// Status update row
+
 struct StatusUpdateRow: View {
     let update: StatusUpdate
     
     var body: some View {
         HStack(alignment: .top, spacing: 15) {
-            // Status icon
+            
             Image(systemName: iconForStatus(update.newStatus))
                 .foregroundColor(colorForStatus(update.newStatus))
                 .font(.title3)
@@ -477,7 +477,7 @@ struct StatusUpdateRow: View {
         .cornerRadius(10)
     }
     
-    // Helper to format date
+    
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
@@ -485,7 +485,7 @@ struct StatusUpdateRow: View {
         return formatter.string(from: date)
     }
     
-    // Helper to get icon for status
+    
     private func iconForStatus(_ status: Report.ReportStatus) -> String {
         switch status {
         case .drafted: return "doc.fill"
@@ -496,7 +496,7 @@ struct StatusUpdateRow: View {
         }
     }
     
-    // Helper to get color for status
+    
     private func colorForStatus(_ status: Report.ReportStatus) -> Color {
         switch status {
         case .drafted: return .gray
@@ -507,7 +507,7 @@ struct StatusUpdateRow: View {
         }
     }
     
-    // Helper to get title for status
+    
     private func titleForStatus(_ status: Report.ReportStatus) -> String {
         switch status {
         case .drafted: return "Draft Saved"

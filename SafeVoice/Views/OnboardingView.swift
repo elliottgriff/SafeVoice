@@ -48,7 +48,7 @@ struct OnboardingView: View {
     
     var body: some View {
         ZStack {
-            // Background gradient
+            
             LinearGradient(gradient: Gradient(colors: [.blue, .purple]), startPoint: .topLeading, endPoint: .bottomTrailing)
                 .ignoresSafeArea()
             
@@ -68,19 +68,19 @@ struct OnboardingView: View {
                     }
                 }
                 
-                // Page content
+                
                 TabView(selection: $currentPage) {
                     ForEach(0..<pages.count, id: \.self) { index in
                         VStack(spacing: 20) {
                             Spacer()
                             
-                            // Icon
+
                             Image(systemName: pages[index].image)
                                 .font(.system(size: 80))
                                 .foregroundColor(.white)
                                 .padding()
                             
-                            // Title and subtitle
+
                             Text(pages[index].title)
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
@@ -93,7 +93,7 @@ struct OnboardingView: View {
                                 .multilineTextAlignment(.center)
                                 .padding(.horizontal)
                             
-                            // Description
+
                             Text(pages[index].description)
                                 .foregroundColor(.white.opacity(0.8))
                                 .multilineTextAlignment(.center)
@@ -102,11 +102,11 @@ struct OnboardingView: View {
                             
                             Spacer()
                             
-                            // Final page options
+
                             if index == pages.count - 1 {
                                 setupOptionsView
                             } else {
-                                // Next button for all pages except last
+
                                 Button(action: {
                                     withAnimation {
                                         currentPage += 1
@@ -132,13 +132,13 @@ struct OnboardingView: View {
         }
     }
     
-    // Setup options view for final page
+
     private var setupOptionsView: some View {
         VStack(spacing: 15) {
             // Create secure profile option
             Button(action: {
                 withAnimation {
-                    // Navigate to secure profile setup
+
                     showSecureProfileSetup()
                 }
             }) {
@@ -154,10 +154,10 @@ struct OnboardingView: View {
                 .cornerRadius(10)
             }
             
-            // Anonymous mode option
+
             Button(action: {
                 withAnimation {
-                    // Navigate to anonymous setup
+
                     showAnonymousSetup()
                 }
             }) {
@@ -173,10 +173,10 @@ struct OnboardingView: View {
                 .cornerRadius(10)
             }
             
-            // Disguise setup option
+
             Button(action: {
                 withAnimation {
-                    // Navigate to disguise setup
+
                     showDisguiseSetup()
                 }
             }) {
@@ -192,10 +192,10 @@ struct OnboardingView: View {
                 .cornerRadius(10)
             }
             
-            // Just explore option
+
             Button(action: {
                 withAnimation {
-                    // Skip to main app
+
                     completeOnboarding()
                 }
             }) {
@@ -214,19 +214,19 @@ struct OnboardingView: View {
         .padding(.bottom, 50)
     }
     
-    // Navigation functions
+
     private func showSecureProfileSetup() {
-        // In real app, would navigate to secure profile setup
+
         appState.isAuthenticated = true
     }
     
     private func showAnonymousSetup() {
-        // In real app, would navigate to anonymous profile setup
+
         appState.isAuthenticated = true
     }
     
     private func showDisguiseSetup() {
-        // In real app, would navigate to disguise mode setup
+
         appState.disguiseMode = true
     }
     
@@ -235,7 +235,7 @@ struct OnboardingView: View {
     }
 }
 
-// Onboarding page structure
+
 struct OnboardingPage {
     let title: String
     let subtitle: String
@@ -243,7 +243,7 @@ struct OnboardingPage {
     let description: String
 }
 
-// Profile setup view
+
 struct SecureProfileSetupView: View {
     @EnvironmentObject var appState: AppState
     @EnvironmentObject var settingsViewModel: SettingsViewModel
@@ -331,13 +331,13 @@ struct SecureProfileSetupView: View {
     }
     
     private func completeSetup() {
-        // In a real app, would save profile settings
+
         appState.isAuthenticated = true
         dismiss()
     }
 }
 
-// Anonymous profile setup view
+
 struct AnonymousSetupView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
@@ -376,7 +376,7 @@ struct AnonymousSetupView: View {
                     
                     if useDisguiseMode {
                         Button("Configure Disguise") {
-                            // In a real app, would show disguise options
+
                         }
                     }
                 }
@@ -397,13 +397,13 @@ struct AnonymousSetupView: View {
     }
     
     private func completeSetup() {
-        // In a real app, would save anonymous settings
+
         appState.isAuthenticated = true
         dismiss()
     }
 }
 
-// Disguise setup view
+
 struct DisguiseSetupView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.dismiss) private var dismiss
@@ -499,7 +499,7 @@ struct DisguiseSetupView: View {
     }
     
     private func applyDisguiseAndComplete() {
-        // In a real app, would save disguise settings and apply them
+
         appState.disguiseMode = true
         dismiss()
     }

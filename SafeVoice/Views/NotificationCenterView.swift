@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-// Notification center view
+
 struct NotificationCenterView: View {
     @EnvironmentObject var appState: AppState
     @ObservedObject var notificationManager = NotificationManager.shared
@@ -38,7 +38,7 @@ struct NotificationCenterView: View {
                     .padding(.vertical, 40)
                 }
             } else {
-                // Unread notifications
+                
                 if !notificationManager.pendingNotifications.isEmpty {
                     Section(header: Text("New")) {
                         ForEach(notificationManager.pendingNotifications) { notification in
@@ -53,7 +53,7 @@ struct NotificationCenterView: View {
                     }
                 }
                 
-                // Read notifications
+                
                 if !notificationManager.readNotifications.isEmpty {
                     Section(header: Text("Earlier")) {
                         ForEach(notificationManager.readNotifications.sorted(by: { $0.createdAt > $1.createdAt }).prefix(10)) { notification in
@@ -87,7 +87,7 @@ struct NotificationCenterView: View {
         }
     }
     
-    // Handle tapping on a notification
+    
     private func handleNotificationTap(_ notification: AppNotification) {
         switch notification.type {
         case .reportUpdate, .actionRequired:
@@ -115,14 +115,14 @@ struct NotificationCenterView: View {
     }
 }
 
-// Notification row component
+
 struct NotificationRow: View {
     let notification: AppNotification
     let reportStore: ReportStore
     
     var body: some View {
         HStack(alignment: .top, spacing: 15) {
-            // Icon
+            
             Image(systemName: iconForNotificationType(notification.type))
                 .font(.title2)
                 .foregroundColor(colorForNotificationType(notification.type))
@@ -153,7 +153,7 @@ struct NotificationRow: View {
         .padding(.vertical, 4)
     }
     
-    // Icon for notification type
+    
     private func iconForNotificationType(_ type: AppNotification.NotificationType) -> String {
         switch type {
         case .reportUpdate: return "bell.fill"
@@ -165,7 +165,7 @@ struct NotificationRow: View {
         }
     }
     
-    // Color for notification type
+    
     private func colorForNotificationType(_ type: AppNotification.NotificationType) -> Color {
         switch type {
         case .reportUpdate: return .blue
@@ -177,7 +177,7 @@ struct NotificationRow: View {
         }
     }
     
-    // Format date as time ago
+    
     private func timeAgoString(from date: Date) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
@@ -185,7 +185,7 @@ struct NotificationRow: View {
     }
 }
 
-// Notification settings view
+
 struct NotificationSettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var notificationManager = NotificationManager.shared
@@ -277,7 +277,7 @@ struct NotificationSettingsView: View {
                 showDraftReminders = UserDefaults.standard.bool(forKey: "showDraftReminders")
                 showCheckIns = UserDefaults.standard.bool(forKey: "showCheckIns")
                 
-                // Set defaults if not set
+                
                 if !UserDefaults.standard.contains(key: "showStatusUpdates") {
                     UserDefaults.standard.set(true, forKey: "showStatusUpdates")
                     showStatusUpdates = true
@@ -298,7 +298,7 @@ struct NotificationSettingsView: View {
         }
     }
     
-    // Helper to request notification permission
+    
     private func requestNotificationPermission() {
         isRequestingPermission = true
         notificationManager.requestAuthorization { granted in
